@@ -6,12 +6,12 @@ export default class TodoApp extends Component {
     super(props);
     this.state = {
       todoInput: "",
-      todos: [{ id: 1, title: "An sang" }],
+      todos: [{ id: 1, title: "An sang", isActive: false }],
     };
   }
 
   handleChangeInput(e) {
-    this.setState({ todoInput: e.target.value });
+    this.setState({ ...this.state, todoInput: e.target.value });
   }
 
   handleSubmitTodo(e) {
@@ -19,11 +19,33 @@ export default class TodoApp extends Component {
       this.setState({
         todos: [
           ...this.state.todos,
-          { id: this.state.todos.length, title: this.state.todoInput },
+          { id: this.state.todos.length + 1, title: this.state.todoInput },
         ],
         todoInput: "",
       });
     }
+  }
+
+  handleDelete(id) {
+    this.setState((prevState) => ({
+      ...prevState,
+      todos: prevState.todos.filter((item) => item.id !== id),
+    }));
+  }
+
+  handleComplete(id) {
+    this.setState((prevState) => ({
+      ...prevState,
+      todos: prevState.todos.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            isActive: !item.isActive,
+          };
+        }
+        return item;
+      }),
+    }));
   }
 
   render() {
@@ -53,7 +75,7 @@ export default class TodoApp extends Component {
             <ul className="todo-list" data-reactid=".0.1.2">
               {this.state.todos.map((item) => (
                 <li
-                  className=""
+                  className={item.isActive ? "completed" : ""}
                   data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654"
                 >
                   <div
@@ -64,6 +86,8 @@ export default class TodoApp extends Component {
                       className="toggle"
                       type="checkbox"
                       data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.0"
+                      value={item.isActive}
+                      onClick={() => this.handleComplete(item.id)}
                     />
                     <label data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.1">
                       {item.title}
@@ -71,6 +95,7 @@ export default class TodoApp extends Component {
                     <button
                       className="destroy"
                       data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.2"
+                      onClick={() => this.handleDelete(item.id)}
                     />
                   </div>
                   <input
