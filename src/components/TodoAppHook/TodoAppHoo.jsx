@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "../TodoApp/TodoApp.css";
+import { TODO_STATUS } from "../../constant/todo";
 
 const TodoAppHook = () => {
   const [todoInput, setTodoInput] = useState("");
   const [todos, setTodos] = useState([
     { id: 1, title: "An sang", isActive: false },
   ]);
+  const [todoFilter, setTodoFilter] = useState([]);
+  const [btnStatus, setBtnStatus] = useState(TODO_STATUS.ALL);
 
   const handleChangeInput = (e) => {
     setTodoInput(e.target.value);
@@ -13,7 +16,10 @@ const TodoAppHook = () => {
 
   const handleSubmitTodo = (e) => {
     if (e.keyCode === 13 && todoInput !== "") {
-      setTodos([...todos, { id: todos.length + 1, title: todoInput }]);
+      setTodos([
+        ...todos,
+        { id: todos.length + 1, title: todoInput, isActive: false },
+      ]);
       setTodoInput("");
     }
   };
@@ -36,6 +42,28 @@ const TodoAppHook = () => {
       }),
     ]);
   };
+
+  const handleChangeButtonStatus = (status) => {
+    setBtnStatus(status);
+
+    const filter = todos.filter((item) => {
+      if (status === TODO_STATUS.ACTIVE && item.isActive === false) {
+        return item;
+      }
+      if (status === TODO_STATUS.COMPLETED && item.isActive === true) {
+        return item;
+      }
+      return item;
+    });
+
+    console.log("filter", filter);
+
+    setTodoFilter();
+  };
+
+  useEffect(() => {
+    console.log("todoFilter", todoFilter);
+  }, [todoFilter]);
 
   return (
     <section className="todoapp">
@@ -96,26 +124,47 @@ const TodoAppHook = () => {
         </section>
         <footer className="footer" data-reactid=".0.2">
           <span className="todo-count" data-reactid=".0.2.0">
-            <strong data-reactid=".0.2.0.0">1</strong>
+            <strong data-reactid=".0.2.0.0">{todos.length}</strong>
             <span data-reactid=".0.2.0.1"> </span>
             <span data-reactid=".0.2.0.2">item</span>
             <span data-reactid=".0.2.0.3"> left</span>
           </span>
           <ul className="filters" data-reactid=".0.2.1">
-            <li data-reactid=".0.2.1.0">
-              <a href="#/" className="selected" data-reactid=".0.2.1.0.0">
+            <li
+              data-reactid=".0.2.1.0"
+              onClick={() => handleChangeButtonStatus(TODO_STATUS.ALL)}
+            >
+              <a
+                href="#/"
+                className={btnStatus === TODO_STATUS.ALL && "selected"}
+                data-reactid=".0.2.1.0.0"
+              >
                 All
               </a>
             </li>
             <span data-reactid=".0.2.1.1"> </span>
-            <li data-reactid=".0.2.1.2">
-              <a href="#/active" className="" data-reactid=".0.2.1.2.0">
+            <li
+              data-reactid=".0.2.1.2"
+              onClick={() => handleChangeButtonStatus(TODO_STATUS.ACTIVE)}
+            >
+              <a
+                href="#/active"
+                className={btnStatus === TODO_STATUS.ACTIVE && "selected"}
+                data-reactid=".0.2.1.2.0"
+              >
                 Active
               </a>
             </li>
             <span data-reactid=".0.2.1.3"> </span>
-            <li data-reactid=".0.2.1.4">
-              <a href="#/completed" className="" data-reactid=".0.2.1.4.0">
+            <li
+              data-reactid=".0.2.1.4"
+              onClick={() => handleChangeButtonStatus(TODO_STATUS.COMPLETED)}
+            >
+              <a
+                href="#/completed"
+                className={btnStatus === TODO_STATUS.COMPLETED && "selected"}
+                data-reactid=".0.2.1.4.0"
+              >
                 Completed
               </a>
             </li>
