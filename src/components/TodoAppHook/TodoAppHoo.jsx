@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../TodoApp/TodoApp.css";
 import { TODO_STATUS } from "../../constant/todo";
 
 const TodoAppHook = () => {
   const [todoInput, setTodoInput] = useState("");
   const [todos, setTodos] = useState([
-    { id: 1, title: "An sang", isActive: false },
+    { id: 1, title: "An sang", isActive: false, isEdit: false },
   ]);
-  const [todoFilter, setTodoFilter] = useState([]);
   const [btnStatus, setBtnStatus] = useState(TODO_STATUS.ALL);
 
   const handleChangeInput = (e) => {
@@ -18,7 +17,12 @@ const TodoAppHook = () => {
     if (e.keyCode === 13 && todoInput !== "") {
       setTodos([
         ...todos,
-        { id: todos.length + 1, title: todoInput, isActive: false },
+        {
+          id: todos.length + 1,
+          title: todoInput,
+          isActive: false,
+          isEdit: false,
+        },
       ]);
       setTodoInput("");
     }
@@ -45,25 +49,21 @@ const TodoAppHook = () => {
 
   const handleChangeButtonStatus = (status) => {
     setBtnStatus(status);
-
-    const filter = todos.filter((item) => {
-      if (status === TODO_STATUS.ACTIVE && item.isActive === false) {
-        return item;
-      }
-      if (status === TODO_STATUS.COMPLETED && item.isActive === true) {
-        return item;
-      }
-      return item;
-    });
-
-    console.log("filter", filter);
-
-    setTodoFilter();
   };
 
-  useEffect(() => {
-    console.log("todoFilter", todoFilter);
-  }, [todoFilter]);
+  const handleFilterResult = () => {
+    return todos.filter((item) => {
+      if (btnStatus === TODO_STATUS.ACTIVE && item.isActive === false) {
+        return item;
+      }
+      if (btnStatus === TODO_STATUS.COMPLETED && item.isActive === true) {
+        return item;
+      }
+      if (btnStatus === TODO_STATUS.ALL) {
+        return item;
+      }
+    });
+  };
 
   return (
     <section className="todoapp">
@@ -88,7 +88,7 @@ const TodoAppHook = () => {
           />
           <label htmlFor="toggle-all" data-reactid=".0.1.1" />
           <ul className="todo-list" data-reactid=".0.1.2">
-            {todos.map((item, index) => (
+            {handleFilterResult().map((item, index) => (
               <li
                 className={item.isActive ? "completed" : ""}
                 data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654"
@@ -102,7 +102,7 @@ const TodoAppHook = () => {
                     className="toggle"
                     type="checkbox"
                     data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.0"
-                    value={item.isActive}
+                    checked={item.isActive}
                     onClick={() => handleComplete(item.id)}
                   />
                   <label data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.1">
@@ -124,7 +124,9 @@ const TodoAppHook = () => {
         </section>
         <footer className="footer" data-reactid=".0.2">
           <span className="todo-count" data-reactid=".0.2.0">
-            <strong data-reactid=".0.2.0.0">{todos.length}</strong>
+            <strong data-reactid=".0.2.0.0">
+              {handleFilterResult().length}
+            </strong>
             <span data-reactid=".0.2.0.1"> </span>
             <span data-reactid=".0.2.0.2">item</span>
             <span data-reactid=".0.2.0.3"> left</span>
