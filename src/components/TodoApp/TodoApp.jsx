@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, createRef } from "react";
 import "./TodoApp.css";
 
 export default class TodoApp extends Component {
@@ -8,10 +8,13 @@ export default class TodoApp extends Component {
       todoInput: "",
       todos: [{ id: 1, title: "An sang", isActive: false }],
     };
+
+    this.input = createRef();
   }
 
   handleChangeInput(e) {
-    this.setState({ ...this.state, todoInput: e.target.value });
+    // this.setState({ ...this.state, todoInput: e.target.value });
+    console.log("this.input", this.input);
   }
 
   handleSubmitTodo(e) {
@@ -57,11 +60,11 @@ export default class TodoApp extends Component {
             <input
               className="new-todo"
               placeholder="What needs to be done?"
-              defaultValue=""
               data-reactid=".0.0.1"
               onChange={(e) => this.handleChangeInput(e)}
-              value={this.state.todoInput}
+              // value={this.state.todoInput}
               onKeyUp={(e) => this.handleSubmitTodo(e)}
+              ref={this.input}
             />
           </header>
           <section className="main" data-reactid=".0.1">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "../TodoApp/TodoApp.css";
 
 const TodoAppHook = () => {
@@ -11,6 +11,32 @@ const TodoAppHook = () => {
     setTodoInput(e.target.value);
   };
 
+  const handleSubmitTodo = (e) => {
+    if (e.keyCode === 13 && todoInput !== "") {
+      setTodos([...todos, { id: todos.length + 1, title: todoInput }]);
+      setTodoInput("");
+    }
+  };
+
+  const handleDelete = (id) => {
+    setTodos([...todos.filter((item) => item.id !== id)]);
+  };
+
+  const handleComplete = (id) => {
+    setTodos([
+      ...todos.map((item) => {
+        if (item.id === id) {
+          return {
+            ...item,
+            isActive: !item.isActive,
+          };
+        } else {
+          return item;
+        }
+      }),
+    ]);
+  };
+
   return (
     <section className="todoapp">
       <div data-reactid=".0">
@@ -19,11 +45,10 @@ const TodoAppHook = () => {
           <input
             className="new-todo"
             placeholder="What needs to be done?"
-            defaultValue=""
             data-reactid=".0.0.1"
             onChange={(e) => handleChangeInput(e)}
             value={todoInput}
-            // onKeyUp={(e) => handleSubmitTodo(e)}
+            onKeyUp={(e) => handleSubmitTodo(e)}
           />
         </header>
         <section className="main" data-reactid=".0.1">
@@ -35,10 +60,11 @@ const TodoAppHook = () => {
           />
           <label htmlFor="toggle-all" data-reactid=".0.1.1" />
           <ul className="todo-list" data-reactid=".0.1.2">
-            {todos.map((item) => (
+            {todos.map((item, index) => (
               <li
                 className={item.isActive ? "completed" : ""}
                 data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654"
+                key={index}
               >
                 <div
                   className="view"
@@ -49,7 +75,7 @@ const TodoAppHook = () => {
                     type="checkbox"
                     data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.0"
                     value={item.isActive}
-                    // onClick={() => handleComplete(item.id)}
+                    onClick={() => handleComplete(item.id)}
                   />
                   <label data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.1">
                     {item.title}
@@ -57,12 +83,11 @@ const TodoAppHook = () => {
                   <button
                     className="destroy"
                     data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.0.2"
-                    // onClick={() => handleDelete(item.id)}
+                    onClick={() => handleDelete(item.id)}
                   />
                 </div>
                 <input
                   className="edit"
-                  defaultValue="ăn sáng"
                   data-reactid=".0.1.2.$bb632cfd-6960-41f0-a68e-5387c4a20654.1"
                 />
               </li>
