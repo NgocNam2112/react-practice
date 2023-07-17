@@ -1,5 +1,4 @@
-import TodoApp from "./components/TodoApp/TodoApp";
-import TodoAppHook from "./components/TodoAppHook/TodoAppHoo";
+import TodoAppHook from "./components/TodoAppHook/TodoAppHook";
 
 function App() {
   return <TodoAppHook />;
