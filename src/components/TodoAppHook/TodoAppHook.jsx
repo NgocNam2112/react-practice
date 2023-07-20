@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "../TodoApp/TodoApp.css";
 import { TODO_STATUS } from "../../constant/todo";
-import { fetchListTodo } from "../../infrastructure/TodoClient/TodoClient";
+import {
+  fetchListTodo,
+  createTodo,
+  deleteTodo,
+  updateTitle,
+} from "../../infrastructure/TodoClient/TodoClient";
 
 const TodoAppHook = () => {
   const [todoInput, setTodoInput] = useState("");
@@ -13,23 +18,30 @@ const TodoAppHook = () => {
     setTodoInput(e.target.value);
   };
 
-  const handleSubmitTodo = (e) => {
+  const handleSubmitTodo = async (e) => {
     if (e.keyCode === 13 && todoInput !== "") {
-      setTodos([
-        ...todos,
-        {
-          id: todos.length + 1,
-          title: todoInput,
-          isActive: false,
-          isEdit: false,
-        },
-      ]);
+      const res = await createTodo({
+        title: todoInput,
+        isActive: false,
+        isEdit: false,
+      });
+      setTodos([...todos, { ...res }]);
+      // setTodos([
+      //   ...todos,
+      //   {
+      //     id: todos.length + 1,
+      //     title: todoInput,
+      //     isActive: false,
+      //     isEdit: false,
+      //   },
+      // ]);
       setTodoInput("");
       setIsSelectAll(false);
     }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
+    await deleteTodo(id);
     const filterTodo = todos.filter((item) => item.id !== id);
     setTodos([...filterTodo]);
 
@@ -40,7 +52,14 @@ const TodoAppHook = () => {
     }
   };
 
-  const handleComplete = (id) => {
+  const handleComplete = async (id) => {
+    const currentItem = todos.find((item) => {
+      return Number(item.id) === Number(id);
+    });
+    await updateTitle(id, {
+      ...currentItem,
+      isActive: !currentItem.isActive,
+    });
     const todoList = todos.map((item) => {
       if (item.id === id) {
         return {
@@ -109,7 +128,14 @@ const TodoAppHook = () => {
     );
   };
 
-  const handleBlurEdit = (id) => {
+  const handleBlurEdit = async (id) => {
+    const currentItem = todos.find((item) => {
+      return Number(item.id) === Number(id);
+    });
+    await updateTitle(id, {
+      ...currentItem,
+      isEdit: false,
+    });
     setTodos((prevState) =>
       prevState.map((item) => {
         if (item.id === id) {
@@ -131,14 +157,15 @@ const TodoAppHook = () => {
     );
   };
 
+  const handleFetchTodos = async () => {
+    const data = await fetchListTodo();
+    if (data) {
+      setTodos(data);
+    }
+  };
+
   // Tuong duong componentDidmout trong class component khi array dependency la mang rong
   useEffect(() => {
-    const handleFetchTodos = async () => {
-      const data = await fetchListTodo();
-      if (data) {
-        setTodos(data);
-      }
-    };
     handleFetchTodos();
   }, []);
   return (
@@ -176,7 +203,7 @@ const TodoAppHook = () => {
                       className="toggle"
                       type="checkbox"
                       checked={item.isActive}
-                      onClick={() => handleComplete(item.id)}
+                      onChange={() => handleComplete(item.id)}
                     />
                     <label>{item.title}</label>
                     <button
