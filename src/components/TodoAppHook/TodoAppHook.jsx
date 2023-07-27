@@ -26,15 +26,6 @@ const TodoAppHook = () => {
         isEdit: false,
       });
       setTodos([...todos, { ...res }]);
-      // setTodos([
-      //   ...todos,
-      //   {
-      //     id: todos.length + 1,
-      //     title: todoInput,
-      //     isActive: false,
-      //     isEdit: false,
-      //   },
-      // ]);
       setTodoInput("");
       setIsSelectAll(false);
     }
