@@ -7,10 +7,14 @@ import {
   deleteTodo,
   updateTitle,
 } from "../../infrastructure/TodoClient/TodoClient";
+import { useDispatch, useSelector } from "react-redux";
+import { addTodo } from "../../store/actions/todoActions";
 
 const TodoAppHook = () => {
+  const { todos } = useSelector((state) => state.todo);
+  const dispatch = useDispatch();
   const [todoInput, setTodoInput] = useState("");
-  const [todos, setTodos] = useState([]);
+  // const [todos, setTodos] = useState([]);
   const [btnStatus, setBtnStatus] = useState(TODO_STATUS.ALL);
   const [isSelectAll, setIsSelectAll] = useState(false);
 
@@ -18,61 +22,61 @@ const TodoAppHook = () => {
     setTodoInput(e.target.value);
   };
 
-  const handleSubmitTodo = async (e) => {
-    if (e.keyCode === 13 && todoInput !== "") {
-      const res = await createTodo({
-        title: todoInput,
-        isActive: false,
-        isEdit: false,
-      });
-      setTodos([...todos, { ...res }]);
-      setTodoInput("");
-      setIsSelectAll(false);
-    }
-  };
+  // const handleSubmitTodo = async (e) => {
+  //   if (e.keyCode === 13 && todoInput !== "") {
+  //     const res = await createTodo({
+  //       title: todoInput,
+  //       isActive: false,
+  //       isEdit: false,
+  //     });
+  //     setTodos([...todos, { ...res }]);
+  //     setTodoInput("");
+  //     setIsSelectAll(false);
+  //   }
+  // };
 
-  const handleDelete = async (id) => {
-    await deleteTodo(id);
-    const filterTodo = todos.filter((item) => item.id !== id);
-    setTodos([...filterTodo]);
+  // const handleDelete = async (id) => {
+  //   await deleteTodo(id);
+  //   const filterTodo = todos.filter((item) => item.id !== id);
+  //   setTodos([...filterTodo]);
 
-    if (filterTodo.every((item) => item.isActive)) {
-      setIsSelectAll(true);
-    } else {
-      setIsSelectAll(false);
-    }
-  };
+  //   if (filterTodo.every((item) => item.isActive)) {
+  //     setIsSelectAll(true);
+  //   } else {
+  //     setIsSelectAll(false);
+  //   }
+  // };
 
-  const handleComplete = async (id) => {
-    const currentItem = todos.find((item) => {
-      return Number(item.id) === Number(id);
-    });
-    await updateTitle(id, {
-      ...currentItem,
-      isActive: !currentItem.isActive,
-    });
-    const todoList = todos.map((item) => {
-      if (item.id === id) {
-        return {
-          ...item,
-          isActive: !item.isActive,
-        };
-      } else {
-        return item;
-      }
-    });
+  // const handleComplete = async (id) => {
+  //   const currentItem = todos.find((item) => {
+  //     return Number(item.id) === Number(id);
+  //   });
+  //   await updateTitle(id, {
+  //     ...currentItem,
+  //     isActive: !currentItem.isActive,
+  //   });
+  //   const todoList = todos.map((item) => {
+  //     if (item.id === id) {
+  //       return {
+  //         ...item,
+  //         isActive: !item.isActive,
+  //       };
+  //     } else {
+  //       return item;
+  //     }
+  //   });
 
-    if (todoList.every((item) => item.isActive)) {
-      setIsSelectAll(true);
-    } else {
-      setIsSelectAll(false);
-    }
-    setTodos([...todoList]);
-  };
+  //   if (todoList.every((item) => item.isActive)) {
+  //     setIsSelectAll(true);
+  //   } else {
+  //     setIsSelectAll(false);
+  //   }
+  //   setTodos([...todoList]);
+  // };
 
-  const handleChangeButtonStatus = (status) => {
-    setBtnStatus(status);
-  };
+  // const handleChangeButtonStatus = (status) => {
+  //   setBtnStatus(status);
+  // };
 
   const handleFilterResult = () => {
     if (typeof todos === "object" && todos.length > 0) {
@@ -91,74 +95,91 @@ const TodoAppHook = () => {
     return [];
   };
 
-  const handleSelectAll = (e) => {
-    setIsSelectAll(!isSelectAll);
+  // const handleSelectAll = (e) => {
+  //   setIsSelectAll(!isSelectAll);
 
-    if (e.target.checked) {
-      const isAllActive = todos.every((item) => item.isActive);
-      if (!isAllActive) {
-        setTodos((prevState) =>
-          prevState.map((item) => ({ ...item, isActive: true }))
-        );
-      }
-    } else {
-      setTodos((prevState) =>
-        prevState.map((item) => ({ ...item, isActive: false }))
-      );
-    }
-  };
+  //   if (e.target.checked) {
+  //     const isAllActive = todos.every((item) => item.isActive);
+  //     if (!isAllActive) {
+  //       setTodos((prevState) =>
+  //         prevState.map((item) => ({ ...item, isActive: true }))
+  //       );
+  //     }
+  //   } else {
+  //     setTodos((prevState) =>
+  //       prevState.map((item) => ({ ...item, isActive: false }))
+  //     );
+  //   }
+  // };
 
-  const handleDoubleClick = (id) => {
-    setTodos((prevState) =>
-      prevState.map((item) => {
-        if (item.id === id) {
-          return { ...item, isEdit: true };
-        }
-        return item;
-      })
-    );
-  };
+  // const handleDoubleClick = (id) => {
+  //   setTodos((prevState) =>
+  //     prevState.map((item) => {
+  //       if (item.id === id) {
+  //         return { ...item, isEdit: true };
+  //       }
+  //       return item;
+  //     })
+  //   );
+  // };
 
-  const handleBlurEdit = async (id) => {
-    const currentItem = todos.find((item) => {
-      return Number(item.id) === Number(id);
-    });
-    await updateTitle(id, {
-      ...currentItem,
-      isEdit: false,
-    });
-    setTodos((prevState) =>
-      prevState.map((item) => {
-        if (item.id === id) {
-          return { ...item, isEdit: false };
-        }
-        return item;
-      })
-    );
-  };
+  // const handleBlurEdit = async (id) => {
+  //   const currentItem = todos.find((item) => {
+  //     return Number(item.id) === Number(id);
+  //   });
+  //   await updateTitle(id, {
+  //     ...currentItem,
+  //     isEdit: false,
+  //   });
+  //   setTodos((prevState) =>
+  //     prevState.map((item) => {
+  //       if (item.id === id) {
+  //         return { ...item, isEdit: false };
+  //       }
+  //       return item;
+  //     })
+  //   );
+  // };
 
-  const handleChangeEdit = (e, id) => {
-    setTodos((prevState) =>
-      prevState.map((item) => {
-        if (item.id === id) {
-          return { ...item, title: e.target.value };
-        }
-        return item;
-      })
-    );
-  };
+  // const handleChangeEdit = (e, id) => {
+  //   setTodos((prevState) =>
+  //     prevState.map((item) => {
+  //       if (item.id === id) {
+  //         return { ...item, title: e.target.value };
+  //       }
+  //       return item;
+  //     })
+  //   );
+  // };
 
-  const handleFetchTodos = async () => {
-    const data = await fetchListTodo();
-    if (data) {
-      setTodos(data);
-    }
-  };
+  // const handleFetchTodos = async () => {
+  //   const data = await fetchListTodo();
+  //   if (data) {
+  //     setTodos(data);
+  //   }
+  // };
 
   // Tuong duong componentDidmout trong class component khi array dependency la mang rong
-  useEffect(() => {
-    handleFetchTodos();
-  }, []);
+  // useEffect(() => {
+  //   handleFetchTodos();
+  // }, []);
+
+  const handleSubmitTodo = (e) => {
+    const length = todos.length;
+
+    if (e.keyCode === 13 && todoInput !== "") {
+      dispatch(
+        addTodo({
+          id: length + 1,
+          title: todoInput,
+          isActive: false,
+          isEdit: false,
+        })
+      );
+      setTodoInput("");
+    }
+  };
+
   return (
     <section className="todoapp">
       <div>
@@ -178,39 +199,39 @@ const TodoAppHook = () => {
             id="toggle-all"
             className="toggle-all"
             type="checkbox"
-            onChange={(e) => handleSelectAll(e)}
+            // onChange={(e) => handleSelectAll(e)}
             checked={isSelectAll}
           />
           <label htmlFor="toggle-all" />
           <ul className="todo-list">
-            {handleFilterResult()?.map((item, index) => (
+            {todos.map((item, index) => (
               <li className={item.isActive ? "completed" : ""} key={index}>
                 {!item.isEdit ? (
                   <div
                     className="view"
-                    onDoubleClick={() => handleDoubleClick(item.id)}
+                    // onDoubleClick={() => handleDoubleClick(item.id)}
                   >
                     <input
                       className="toggle"
                       type="checkbox"
                       checked={item.isActive}
-                      onChange={() => handleComplete(item.id)}
+                      // onChange={() => handleComplete(item.id)}
                     />
                     <label>{item.title}</label>
                     <button
                       className="destroy"
-                      onClick={() => handleDelete(item.id)}
+                      // onClick={() => handleDelete(item.id)}
                     />
                   </div>
                 ) : (
                   <input
                     className="edit"
                     value={item.title}
-                    onBlur={() => handleBlurEdit(item.id)}
-                    onChange={(e) => handleChangeEdit(e, item.id)}
+                    // onBlur={() => handleBlurEdit(item.id)}
+                    // onChange={(e) => handleChangeEdit(e, item.id)}
                     onKeyDown={(e) => {
                       if (e.keyCode === 13) {
-                        handleBlurEdit(item.id);
+                        // handleBlurEdit(item.id);
                       }
                     }}
                   />
@@ -227,7 +248,9 @@ const TodoAppHook = () => {
             <span> left</span>
           </span>
           <ul className="filters">
-            <li onClick={() => handleChangeButtonStatus(TODO_STATUS.ALL)}>
+            <li
+            // onClick={() => handleChangeButtonStatus(TODO_STATUS.ALL)}
+            >
               <a
                 href="#/"
                 className={btnStatus === TODO_STATUS.ALL && "selected"}
@@ -236,7 +259,9 @@ const TodoAppHook = () => {
               </a>
             </li>
             <span> </span>
-            <li onClick={() => handleChangeButtonStatus(TODO_STATUS.ACTIVE)}>
+            <li
+            // onClick={() => handleChangeButtonStatus(TODO_STATUS.ACTIVE)}
+            >
               <a
                 href="#/active"
                 className={btnStatus === TODO_STATUS.ACTIVE && "selected"}
@@ -245,7 +270,9 @@ const TodoAppHook = () => {
               </a>
             </li>
             <span> </span>
-            <li onClick={() => handleChangeButtonStatus(TODO_STATUS.COMPLETED)}>
+            <li
+            // onClick={() => handleChangeButtonStatus(TODO_STATUS.COMPLETED)}
+            >
               <a
                 href="#/completed"
                 className={btnStatus === TODO_STATUS.COMPLETED && "selected"}

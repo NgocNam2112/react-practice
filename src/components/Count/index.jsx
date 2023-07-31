@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { decreaseCount, increaseCount } from "../../store/actions/countActions";
 
 const Count = () => {
-  const countState = useSelector((state) => state.count);
+  const { countReducer } = useSelector((state) => state);
   const dispatch = useDispatch();
 
   const handleIncrease = () => {
@@ -16,7 +16,7 @@ const Count = () => {
   return (
     <>
       <div>
-        <div>Count: {countState}</div>
+        <div>Count: {countReducer.count}</div>
         <div>
           <button onClick={handleIncrease}>Increasement</button>
           <button onClick={handleDecrease}>Decreasement</button>
