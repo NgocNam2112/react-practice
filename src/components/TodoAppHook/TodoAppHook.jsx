@@ -8,14 +8,21 @@ import {
   updateTitle,
 } from "../../infrastructure/TodoClient/TodoClient";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo } from "../../store/actions/todoActions";
+import {
+  activeEditTodo,
+  activeTodo,
+  addTodo,
+  editTodo,
+  removeTodo,
+} from "../../store/actions/todoActions";
+import TodoFooter from "../TodoFooter/TodoFooter";
 
 const TodoAppHook = () => {
-  const { todos } = useSelector((state) => state.todo);
+  const { todos, status } = useSelector((state) => state.todo);
   const dispatch = useDispatch();
   const [todoInput, setTodoInput] = useState("");
   // const [todos, setTodos] = useState([]);
-  const [btnStatus, setBtnStatus] = useState(TODO_STATUS.ALL);
+
   const [isSelectAll, setIsSelectAll] = useState(false);
 
   const handleChangeInput = (e) => {
@@ -77,23 +84,6 @@ const TodoAppHook = () => {
   // const handleChangeButtonStatus = (status) => {
   //   setBtnStatus(status);
   // };
-
-  const handleFilterResult = () => {
-    if (typeof todos === "object" && todos.length > 0) {
-      return todos.filter((item) => {
-        if (btnStatus === TODO_STATUS.ACTIVE && item.isActive === false) {
-          return item;
-        }
-        if (btnStatus === TODO_STATUS.COMPLETED && item.isActive === true) {
-          return item;
-        }
-        if (btnStatus === TODO_STATUS.ALL) {
-          return item;
-        }
-      });
-    }
-    return [];
-  };
 
   // const handleSelectAll = (e) => {
   //   setIsSelectAll(!isSelectAll);
@@ -180,6 +170,48 @@ const TodoAppHook = () => {
     }
   };
 
+  const handleComplete = (e, id) => {
+    dispatch(activeTodo(id));
+  };
+
+  const handleDelete = (id) => {
+    dispatch(removeTodo(id));
+  };
+
+  const handleDoubleClick = (id) => {
+    dispatch(activeEditTodo(id));
+  };
+
+  const handleBlurEdit = (id) => {
+    dispatch(activeEditTodo(id));
+  };
+
+  const handleChangeEdit = (e, id) => {
+    dispatch(
+      editTodo({
+        id,
+        data: e.target.value,
+      })
+    );
+  };
+
+  const handleFilterResult = () => {
+    if (typeof todos === "object" && todos.length > 0) {
+      return todos.filter((item) => {
+        if (status === TODO_STATUS.ACTIVE && item.isActive === false) {
+          return item;
+        }
+        if (status === TODO_STATUS.COMPLETED && item.isActive === true) {
+          return item;
+        }
+        if (status === TODO_STATUS.ALL) {
+          return item;
+        }
+      });
+    }
+    return [];
+  };
+
   return (
     <section className="todoapp">
       <div>
@@ -204,22 +236,24 @@ const TodoAppHook = () => {
           />
           <label htmlFor="toggle-all" />
           <ul className="todo-list">
-            {todos.map((item, index) => (
+            {handleFilterResult().map((item, index) => (
               <li className={item.isActive ? "completed" : ""} key={index}>
                 {!item.isEdit ? (
                   <div
                     className="view"
-                    // onDoubleClick={() => handleDoubleClick(item.id)}
+                    onDoubleClick={() => handleDoubleClick(item.id)}
                   >
                     <input
                       className="toggle"
                       type="checkbox"
                       checked={item.isActive}
+                      onChange={(e) => handleComplete(e, item.id)}
                       // onChange={() => handleComplete(item.id)}
                     />
                     <label>{item.title}</label>
                     <button
                       className="destroy"
+                      onClick={() => handleDelete(item.id)}
                       // onClick={() => handleDelete(item.id)}
                     />
                   </div>
@@ -227,11 +261,11 @@ const TodoAppHook = () => {
                   <input
                     className="edit"
                     value={item.title}
-                    // onBlur={() => handleBlurEdit(item.id)}
-                    // onChange={(e) => handleChangeEdit(e, item.id)}
+                    onBlur={(e) => handleBlurEdit(item.id)}
+                    onChange={(e) => handleChangeEdit(e, item.id)}
                     onKeyDown={(e) => {
                       if (e.keyCode === 13) {
-                        // handleBlurEdit(item.id);
+                        handleBlurEdit(item.id);
                       }
                     }}
                   />
@@ -240,48 +274,7 @@ const TodoAppHook = () => {
             ))}
           </ul>
         </section>
-        <footer className="footer">
-          <span className="todo-count">
-            <strong>{handleFilterResult().length}</strong>
-            <span> </span>
-            <span>item</span>
-            <span> left</span>
-          </span>
-          <ul className="filters">
-            <li
-            // onClick={() => handleChangeButtonStatus(TODO_STATUS.ALL)}
-            >
-              <a
-                href="#/"
-                className={btnStatus === TODO_STATUS.ALL && "selected"}
-              >
-                All
-              </a>
-            </li>
-            <span> </span>
-            <li
-            // onClick={() => handleChangeButtonStatus(TODO_STATUS.ACTIVE)}
-            >
-              <a
-                href="#/active"
-                className={btnStatus === TODO_STATUS.ACTIVE && "selected"}
-              >
-                Active
-              </a>
-            </li>
-            <span> </span>
-            <li
-            // onClick={() => handleChangeButtonStatus(TODO_STATUS.COMPLETED)}
-            >
-              <a
-                href="#/completed"
-                className={btnStatus === TODO_STATUS.COMPLETED && "selected"}
-              >
-                Completed
-              </a>
-            </li>
-          </ul>
-        </footer>
+        <TodoFooter todos={handleFilterResult()} />
       </div>
     </section>
   );
