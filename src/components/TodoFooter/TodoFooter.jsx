@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { TODO_STATUS } from "../../constant/todo";
 import { useDispatch, useSelector } from "react-redux";
-import { changeStatus } from "../../store/actions/todoActions";
+import { changeStatus } from "../../store/todoSlice/todoSlice";
 
 const TodoFooter = ({ todos }) => {
   const { status } = useSelector((state) => state.todo);

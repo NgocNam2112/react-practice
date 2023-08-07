@@ -1,6 +1,9 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { decreaseCount, increaseCount } from "../../store/actions/countActions";
+import {
+  decreaseCount,
+  increaseCount,
+} from "../../store/countSlice/countSlice";
 
 const Count = () => {
   const { countReducer } = useSelector((state) => state);

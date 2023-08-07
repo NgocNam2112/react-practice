@@ -1,12 +1,15 @@
-import { combineReducers, createStore } from "redux";
-import { countReducer } from "./reducers/countReducers";
-import { todoReducer } from "./reducers/todoReducers";
+import { combineReducers } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
+import { countReducer } from "./countSlice/countSlice";
+import { todoReducer } from "./todoSlice/todoSlice";
 
 const rootReducer = combineReducers({
   countReducer,
   todo: todoReducer,
 });
 
-const store = createStore(rootReducer);
+const store = configureStore({
+  reducer: rootReducer,
+});
 
 export default store;

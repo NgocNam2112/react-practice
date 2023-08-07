@@ -8,14 +8,15 @@ import {
   updateTitle,
 } from "../../infrastructure/TodoClient/TodoClient";
 import { useDispatch, useSelector } from "react-redux";
+
+import TodoFooter from "../TodoFooter/TodoFooter";
 import {
   activeEditTodo,
   activeTodo,
   addTodo,
   editTodo,
   removeTodo,
-} from "../../store/actions/todoActions";
-import TodoFooter from "../TodoFooter/TodoFooter";
+} from "../../store/todoSlice/todoSlice";
 
 const TodoAppHook = () => {
   const { todos, status } = useSelector((state) => state.todo);
