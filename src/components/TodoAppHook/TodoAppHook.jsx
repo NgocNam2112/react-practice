@@ -17,6 +17,7 @@ import {
   editTodo,
   removeTodo,
 } from "../../store/todoSlice/todoSlice";
+import { fetchTodo } from "../../store/todoSlice/todoActions";
 
 const TodoAppHook = () => {
   const { todos, status } = useSelector((state) => state.todo);
@@ -212,6 +213,10 @@ const TodoAppHook = () => {
     }
     return [];
   };
+
+  useEffect(() => {
+    dispatch(fetchTodo());
+  }, []);
 
   return (
     <section className="todoapp">

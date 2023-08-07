@@ -1,24 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { TODO_STATUS } from "../../constant/todo";
+import { fetchTodo } from "./todoActions";
 
 const initialState = {
   status: TODO_STATUS.ALL,
-  todos: [
-    {
-      id: 1,
-      title: "An sang",
-      isActive: false,
-      isEdit: false,
-    },
-  ],
+  todos: [],
 };
 
 export const todoSlice = createSlice({
-  name: "createSlice",
+  name: "todoSlice",
   initialState,
   reducers: {
     addTodo: (state, action) => {
-      console.log("123");
       state.todos.push(action.payload);
       //   return {
       //     ...state,
@@ -67,6 +60,11 @@ export const todoSlice = createSlice({
     changeStatus: (state, action) => {
       state.status = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(fetchTodo.fulfilled, (state, action) => {
+      state.todos = action.payload;
+    });
   },
 });
 
